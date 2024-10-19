@@ -27,17 +27,17 @@ namespace eigenvalue {
             linear_algebra::normalize(z);
             x.push_back(z);
 
-            max_eig.push_back(linear_algebra::scalar(x.back(),A*x.back())); // PROBLEMA
+            max_eig.push_back(linear_algebra::scalar(x.back(),A*x.back()));
 
             residual = linear_algebra::norm(A*x_old - max_eig.back() * x_old);
             increment = std::abs(max_eig.back()-max_eig[max_eig.size()-2]) / std::abs(max_eig.back());
 
             z.clear();
             if (increment < tolerance && residual < tolerance) {
-                x.clear();
                 return max_eig.back();
             }
         }
+        return max_eig.back();
     }
 
     bool power_iteration::converged(const double& residual, const double& increment) const

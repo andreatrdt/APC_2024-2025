@@ -14,7 +14,12 @@ namespace eigenvalue {
         double increment = {};
 
         std:: vector <double> max_eig;
-        max_eig.push_back(linear_algebra::scalar(x0,A*x0));
+
+        std::vector<double> temp = linear_algebra::forwardsolve(L, x0);
+        std::vector<double> Ax0 = linear_algebra::backsolve(U, temp);
+
+        max_eig.push_back(linear_algebra::scalar(x0,Ax0));
+
 
         std::vector < std::vector <double> > x;
         x.push_back(x0);
@@ -28,21 +33,25 @@ namespace eigenvalue {
             linear_algebra::normalize(z);
             x.push_back(z);
 
-            max_eig.push_back(linear_algebra::scalar(x.back(),A*x.back()));
+            std::vector<double> temp_eig = linear_algebra::forwardsolve(L, x.back());
 
-            residual = linear_algebra::norm(A*x_old - max_eig.back() * x_old);
+            max_eig.push_back(linear_algebra::scalar(x.back(), linear_algebra::backsolve(U, temp_eig)));
+
+            std::vector<double> temp_res = linear_algebra::forwardsolve(L, x_old);
+
+            residual = linear_algebra::norm( linear_algebra::backsolve(U, temp_res)- max_eig.back() * x_old);
             increment = std::abs(max_eig.back()-max_eig[max_eig.size()-2]) / std::abs(max_eig.back());
 
+            // std::cout << "eig :" <<  max_eig.back() << std::endl;
             // std::cout << "increment :" <<increment << std::endl;
             // std::cout << "residual :" <<residual << std::endl;
             // std::cout << "iter :" <<k << std::endl;
 
             if (increment < tolerance && residual < tolerance) {
-                x.clear();
-                return (max_eig.back());
+                return 1/max_eig.back();
             }
         }
-        return (max_eig.back());
+        return 1/max_eig.back();
     }
 
     bool inverse_power_iteration::converged(const double& residual, const double& increment) const

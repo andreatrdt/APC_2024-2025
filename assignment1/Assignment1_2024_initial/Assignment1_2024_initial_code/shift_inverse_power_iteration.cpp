@@ -14,7 +14,7 @@ namespace eigenvalue {
         }
 
         inverse_power_iteration method;
-        return method.solve(A_tilde,x0);
+        return mu + method.solve(A_tilde,x0);
 
     }
 
