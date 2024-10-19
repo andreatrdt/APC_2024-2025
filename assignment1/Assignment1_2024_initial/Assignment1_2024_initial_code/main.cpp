@@ -9,7 +9,7 @@
 
 int main() {
 
-    std::string filename = "../inputs/input_20.txt";
+    std::string filename = "../inputs/input_50.txt";
 
     linear_algebra::square_matrix A(filename);
     std::vector<double> x0(A.size());

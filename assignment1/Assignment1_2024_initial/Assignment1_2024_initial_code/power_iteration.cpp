@@ -1,6 +1,7 @@
 #include "power_iteration.h"
 #include <vector>
 
+
 namespace eigenvalue {
 
     using linear_algebra::operator*;
@@ -13,24 +14,25 @@ namespace eigenvalue {
 
         std:: vector <double> max_eig;
         max_eig.push_back(linear_algebra::scalar(x0,A*x0));
-
         std::vector < std::vector <double> > x;
         x.push_back(x0);
 
-        for ( int k = 1 ; k< max_it ; k++ ){
+        for ( int k = 0 ; k< max_it ; k++ ){
 
             std::vector <double> z;
+
             z = A*x.back();
 
-            double temp_val = (1/(linear_algebra::norm(z)));
-            x.push_back(temp_val * z);
+            std::vector<double> x_old = x.back();
+            linear_algebra::normalize(z);
+            x.push_back(z);
 
-            max_eig.push_back(linear_algebra::scalar(x.back(),A*x.back()));
+            max_eig.push_back(linear_algebra::scalar(x.back(),A*x.back())); // PROBLEMA
 
-            residual = linear_algebra::norm(z - (max_eig.back() * x.back()));
-
+            residual = linear_algebra::norm(A*x_old - max_eig.back() * x_old);
             increment = std::abs(max_eig.back()-max_eig[max_eig.size()-2]) / std::abs(max_eig.back());
 
+            z.clear();
             if (increment < tolerance && residual < tolerance) {
                 x.clear();
                 return max_eig.back();
