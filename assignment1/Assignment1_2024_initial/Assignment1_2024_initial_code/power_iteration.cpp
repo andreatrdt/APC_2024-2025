@@ -46,8 +46,9 @@ namespace eigenvalue {
             // increment = | v^(k+1) - v^k | / | v^k |
             increment = std::abs(max_eig.back()-max_eig[max_eig.size()-2]) / std::abs(max_eig.back());
 
+            bool conv = converged(residual,increment);
             z.clear();
-            if (increment < tolerance && residual < tolerance) {
+            if (conv) {
                 // if conditions are met return eigenvalue else repeat
                 return max_eig.back();
             }
