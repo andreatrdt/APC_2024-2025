@@ -1,0 +1,15 @@
+# ninja log v6
+30	3833	7515483428487295	CMakeFiles/Assignment1_2024.dir/matrixhelpers.cpp.obj	ca56be6b0fe8f456
+43	3968	7515483428617286	CMakeFiles/Assignment1_2024.dir/squarematrix.cpp.obj	abec4561e996dcc2
+130	4086	7515483429482639	CMakeFiles/Assignment1_2024.dir/vectorhelpers.cpp.obj	56deabc67824b108
+15	4307	7515483428337316	CMakeFiles/Assignment1_2024.dir/main.cpp.obj	bb3c481dfabc9b48
+263	4552	7515483430816429	CMakeFiles/Assignment1_2024.dir/inverse_power_iteration.cpp.obj	f6da733f036f8e76
+212	4589	7515483430297327	CMakeFiles/Assignment1_2024.dir/power_iteration.cpp.obj	67d92eee70806d06
+3898	5856	7515483467164673	CMakeFiles/Assignment1_2024.dir/shift_inverse_power_iteration.cpp.obj	98203238c8c8357f
+5860	6176	7515483486780946	Assignment1_2024.exe	9af6589304e27b86
+89	1440	7532834914033170	CMakeFiles/Assignment1_2024.dir/shift_inverse_power_iteration.cpp.obj	98203238c8c8357f
+1442	2105	7532834927568490	Assignment1_2024.exe	9af6589304e27b86
+144	2621	7532935804726527	CMakeFiles/Assignment1_2024.dir/shift_inverse_power_iteration.cpp.obj	98203238c8c8357f
+56	1663	7532936553061388	CMakeFiles/Assignment1_2024.dir/shift_inverse_power_iteration.cpp.obj	98203238c8c8357f
+60	1573	7532937307253025	CMakeFiles/Assignment1_2024.dir/shift_inverse_power_iteration.cpp.obj	98203238c8c8357f
+1575	1875	7532937322399141	Assignment1_2024.exe	9af6589304e27b86

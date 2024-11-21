@@ -14,11 +14,12 @@ namespace eigenvalue {
         }
 
         // use inverse power iteration method in order to use shift inverse power iteration
-        inverse_power_iteration method;
+        // inverse_power_iteration method(1000, 1e-6,BOTH);
+        //
+        // // return shifted eigenvalues if conditions are met
+        // return mu + method.solve(A_tilde,x0);
 
-        // return shifted eigenvalues if conditions are met
-        return mu + method.solve(A_tilde,x0);
-
+        return mu + inverse_power_iteration::solve(A_tilde,x0);
     }
 
 } // eigenvalue
