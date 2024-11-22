@@ -18,9 +18,27 @@ namespace convnet {
     }
 
     tensor_3d convolutional_layer::evaluate(const tensor_3d &inputs) const {
+        std::size_t H_out = (inputs.get_height() - filters[0].get_height() + 2*s_padding) / s_stride +1;
+        std::size_t W_out = (inputs.get_width() - filters[0].get_width() + 2*s_padding) / s_stride +1;
 
-        /* YOUR CODE SHOULD GO HERE */
+        tensor_3d evaluate(H_out,W_out,n_filters);
 
+        for (std::size_t i = 0 ; i < H_out; ++i) {
+            for ( std::size_t j = 0; j < W_out; ++j) {
+                for ( std::size_t k = 0 ; k < n_filters; ++k) {
+                    for (std::size_t h = 0 ; h < filters[k].get_height(); ++h) {
+                        for ( std::size_t w = 0; w < filters[k].get_width(); ++w) {
+                            for ( std::size_t d = 0 ; d < filters[k].get_depth(); ++d) {
+
+                                evaluate(i,j,k) = inputs(i* s_stride + h,j*s_stride + w,d) * filters[k].operator()(h,w,d) ;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return evaluate;
     }
 
     tensor_3d convolutional_layer::apply_activation(const tensor_3d &Z) const {
@@ -29,8 +47,9 @@ namespace convnet {
 
     tensor_3d convolutional_layer::forward_pass(const tensor_3d &inputs) const {
 
-        /* YOUR CODE SHOULD GO HERE */
 
+        // TO BE CHECKED !!!!
+        return apply_activation(evaluate(inputs));
     }
 
 
