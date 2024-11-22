@@ -17,14 +17,20 @@ namespace convnet {
 
     std::vector<double> fc_layer::compute(const std::vector<double> &inputs) const {
 
-        /* YOUR CODE SHOULD GO HERE */
+        if (inputs.size() != size_in) {
+            std::cout << "fc_layer::compute(): input size mismatch" << std::endl;
+        }
+        if (weights.get_n_rows() != size_out) {
+            std::cout << "fc_layer::compute(): weights size mismatch" << std::endl;
+        }
+
+        return weights.dot(inputs);
 
     };
 
     std::vector<double> fc_layer::forward_pass(const std::vector<double> &inputs) const {
 
-        /* YOUR CODE SHOULD GO HERE */
-
+        return apply_activation(compute(inputs));
     };
 
     std::vector<double> fc_layer::get_parameters() const {
