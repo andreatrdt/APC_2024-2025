@@ -16,20 +16,21 @@ namespace convnet {
     };
 
     std::vector<double> fc_layer::compute(const std::vector<double> &inputs) const {
-
+        // Check if the size of the input vector matches the expected size for the fully connected layer
         if (inputs.size() != size_in) {
-            std::cout << "fc_layer::compute(): input size mismatch" << std::endl;
+            throw std::invalid_argument("Input size mismatch");
         }
+        // Check if the number of rows in the weight matrix matches the expected size of the output
         if (weights.get_n_rows() != size_out) {
-            std::cout << "fc_layer::compute(): weights size mismatch" << std::endl;
+           throw std::invalid_argument("Weights size mismatch");
         }
 
+        // Perform the dot product of the weight matrix and the input vector
         return weights.dot(inputs);
-
     };
 
     std::vector<double> fc_layer::forward_pass(const std::vector<double> &inputs) const {
-
+        // apply activation function to fully connected layer
         return apply_activation(compute(inputs));
     };
 
