@@ -24,7 +24,7 @@ namespace convnet {
         throw std::invalid_argument("No filters provided for convolutional layer");
     }
 
-    // Ensure the depth of input tensor matches the depth of each filter
+    // Ensure depth of input tensor matches depth of each filter
     for (const auto &filter : filters) {
         if (filter.get_depth() != inputs.get_depth()) {
             throw std::invalid_argument("Depth of input tensor must match filter depth");
@@ -40,31 +40,22 @@ namespace convnet {
         throw std::invalid_argument("Invalid output dimensions; check input size, filter size, stride, or padding");
     }
 
-    // Initialize the output tensor with zeros
+    // Initialize output tensor with zeros
     tensor_3d evaluate(H_out, W_out, n_filters);
     evaluate.initialize_with_zeros();
 
-        // Ensure input dimensions are greater than or equal to filter dimensions
-        if (inputs.get_height() < s_filter || inputs.get_width() < s_filter) {
-            throw std::invalid_argument("Input tensor dimensions must be greater than or equal to filter dimensions");
-        }
-
-        // Perform the convolution operation
-        for (std::size_t i = 0; i < H_out; ++i) {           // Loop over output rows
-            for (std::size_t j = 0; j < W_out; ++j) {       // Loop over output columns
-                for (std::size_t k = 0; k < n_filters; ++k) {  // Loop over each filter
-                    for (std::size_t h = 0; h < s_filter; ++h) { // Loop over filter height
-                        for (std::size_t w = 0; w < s_filter; ++w) { // Loop over filter width
-                            for (std::size_t d = 0; d < filters[k].get_depth(); ++d) { // Loop over filter depth
-                                // Calculate input indices
+        // Perform convolution operation
+        for (std::size_t i = 0; i < H_out; ++i) {
+            for (std::size_t j = 0; j < W_out; ++j) {
+                for (std::size_t k = 0; k < n_filters; ++k) {
+                    for (std::size_t h = 0; h < s_filter; ++h) {
+                        for (std::size_t w = 0; w < s_filter; ++w) {
+                            for (std::size_t d = 0; d < filters[k].get_depth(); ++d) {
+                                // Input indices
                                 std::size_t input_i = i * s_stride + h;
                                 std::size_t input_j = j * s_stride + w;
-
-                                // Ensure input indices are within bounds
-                                if (input_i < inputs.get_height() && input_j < inputs.get_width()) {
-                                    // Perform the element-wise multiplication and accumulate
-                                    evaluate(i, j, k) += inputs(input_i, input_j, d) * filters[k](h, w, d);
-                                }
+                                // Perform element-wise multiplication and accumulate
+                                evaluate(i, j, k) += inputs(input_i, input_j, d) * filters[k](h, w, d);
                             }
                         }
                     }
