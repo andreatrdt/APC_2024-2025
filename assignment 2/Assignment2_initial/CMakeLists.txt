@@ -28,5 +28,4 @@ add_executable(Assignment2_2024
         tensor_3d.hpp
         activation_function.hpp
         test.hpp
-        max_pooling_layer.cpp
 )

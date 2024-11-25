@@ -32,8 +32,8 @@ namespace convnet {
     }
 
     // Calculate output dimensions
-    std::size_t const H_out = (inputs.get_height() - filters[0].get_height() + 2 * s_padding) / s_stride + 1;
-    std::size_t const W_out = (inputs.get_width() - filters[0].get_width() + 2 * s_padding) / s_stride + 1;
+    std::size_t const H_out = (inputs.get_height() - s_filter + 2 * s_padding) / s_stride + 1;
+    std::size_t const W_out = (inputs.get_width() - s_filter + 2 * s_padding) / s_stride + 1;
 
     // Ensure output dimensions are valid
     if (H_out <= 0 || W_out <= 0) {
@@ -45,7 +45,7 @@ namespace convnet {
     evaluate.initialize_with_zeros();
 
         // Ensure input dimensions are greater than or equal to filter dimensions
-        if (inputs.get_height() < filters[0].get_height() || inputs.get_width() < filters[0].get_width()) {
+        if (inputs.get_height() < s_filter || inputs.get_width() < s_filter) {
             throw std::invalid_argument("Input tensor dimensions must be greater than or equal to filter dimensions");
         }
 
@@ -53,8 +53,8 @@ namespace convnet {
         for (std::size_t i = 0; i < H_out; ++i) {           // Loop over output rows
             for (std::size_t j = 0; j < W_out; ++j) {       // Loop over output columns
                 for (std::size_t k = 0; k < n_filters; ++k) {  // Loop over each filter
-                    for (std::size_t h = 0; h < filters[k].get_height(); ++h) { // Loop over filter height
-                        for (std::size_t w = 0; w < filters[k].get_width(); ++w) { // Loop over filter width
+                    for (std::size_t h = 0; h < s_filter; ++h) { // Loop over filter height
+                        for (std::size_t w = 0; w < s_filter; ++w) { // Loop over filter width
                             for (std::size_t d = 0; d < filters[k].get_depth(); ++d) { // Loop over filter depth
                                 // Calculate input indices
                                 std::size_t input_i = i * s_stride + h;

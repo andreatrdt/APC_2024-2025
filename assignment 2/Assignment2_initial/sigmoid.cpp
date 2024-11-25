@@ -4,7 +4,7 @@ namespace convnet {
 
     std::vector<double> sigmoid::apply(const std::vector<double> &X) const {
         std::vector<double> out;
-        for (double x: X) out.push_back(1.0 / (1.0 + exp(x)));
+        for (double x: X) out.push_back(1.0 / (1.0 + std::exp(-x)));
         return out;
     }
 
