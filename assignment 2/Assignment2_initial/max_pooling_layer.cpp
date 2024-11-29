@@ -30,8 +30,8 @@ namespace convnet {
                         for (std::size_t w = 0; w < size_filter; ++w) {
 
                             // Input indices
-                            std::size_t input_i = i * stride + h;
-                            std::size_t input_j = j * stride + w;
+                            const std::size_t input_i = i * stride + h;
+                            const std::size_t input_j = j * stride + w;
 
                             // Update maximum value
                             max_val = std::max(max_val, inputs(input_i, input_j, d));
