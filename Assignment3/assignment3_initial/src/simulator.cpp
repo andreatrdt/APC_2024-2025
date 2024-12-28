@@ -6,6 +6,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <mpi.h>
 
 Simulator::Simulator(const la::dense_matrix& proposer, const la::dense_matrix& acceptor)
     : preferences_proposer(proposer), preferences_acceptor(acceptor), num_elements(proposer.rows()) {
@@ -51,10 +52,19 @@ void Simulator::update_matches(const la::dense_matrix& proposal) {
   // You can split the work by assigning different rows to different process and combine
   // togheter the result.
 
-  // YOUR CODE GOES HERE
+  int size;
+  int rank;
+  MPI_Comm_rank (MPI_COMM_WORLD, &rank);
+  MPI_Comm_size (MPI_COMM_WORLD, &size);
+
+  const int acceptors_per_proc = num_elements / size;
+  const int start_acceptor = rank * acceptors_per_proc;
+  const int end_acceptor = start_acceptor + acceptors_per_proc;
+
+  la::dense_matrix local_matches(acceptors_per_proc, 1, num_elements);
 
   // loop over all the acceptors
-  for (value_type acceptor_index = 0; acceptor_index < num_elements; ++acceptor_index) {
+  for (value_type acceptor_index = start_acceptor; acceptor_index < end_acceptor; ++acceptor_index) {
     // find out which is the best proposer that we have (considering the current matching)
     const value_type previous_match = get_matching_proposer(acceptor_index);
     value_type best_proposer_index  = previous_match;
@@ -66,11 +76,23 @@ void Simulator::update_matches(const la::dense_matrix& proposal) {
     }
 
     // store the best option in the new matching matrix
-    matches(acceptor_index, 0) = best_proposer_index;
+    local_matches(acceptor_index - start_acceptor, 0) = best_proposer_index;
     log_match(acceptor_index, best_proposer_index, previous_match);
   }
 
-  // YOUR CODE GOES HERE
+
+
+  if (rank == 0) {
+    MPI_Gather(local_matches.data(), acceptors_per_proc, MPI_INT,
+               matches.data(), acceptors_per_proc, MPI_INT,
+               0, MPI_COMM_WORLD);
+  } else {
+    MPI_Gather(local_matches.data(), acceptors_per_proc, MPI_INT,
+               nullptr, 0, MPI_INT,
+               0, MPI_COMM_WORLD);
+  }
+
+  MPI_Bcast(matches.data(), num_elements, MPI_INT, 0, MPI_COMM_WORLD);
 }
 
 la::dense_matrix Simulator::compute_proposal() {
@@ -86,10 +108,21 @@ la::dense_matrix Simulator::compute_proposal() {
   // declare the matrix that will hold the proposal
   la::dense_matrix proposal(num_elements, num_elements, 0);
 
-  // YOUR CODE GOES HERE
+
+  int size;
+  int rank;
+  MPI_Comm_rank (MPI_COMM_WORLD, &rank);
+  MPI_Comm_size (MPI_COMM_WORLD, &size);
+
+  // Calcola il numero di propositori assegnati a ciascun processo
+  const int proposers_per_proc = num_elements / size;
+  const int start_proposer = rank * proposers_per_proc;
+  const int end_proposer = start_proposer + proposers_per_proc;
+
+  la::dense_matrix local_proposal(num_elements, num_elements, 0);
 
   // loop over the proposer to fille the proposal matrix
-  for (value_type proposer_index = 0; proposer_index < num_elements; ++proposer_index) {
+  for (value_type proposer_index = start_proposer; proposer_index < end_proposer; ++proposer_index) {
     // get the current match for the current proposer
     const value_type current_match_index = get_matching_acceptor(proposer_index);
 
@@ -99,7 +132,7 @@ la::dense_matrix Simulator::compute_proposal() {
       // update the data structure that represents the proposal
       const value_type next_best_index =
           preferences_proposer(proposer_index, proposer_status(proposer_index, 0));
-      proposal(next_best_index, proposer_index) = 1;
+      local_proposal(next_best_index, proposer_index) = 1;
 
       // update the data structure that keep tracks of the most preffered choices for the porposers that do not
       // have rejected the proposer yet
@@ -111,7 +144,10 @@ la::dense_matrix Simulator::compute_proposal() {
     }
   }
 
-  // YOUR CODE GOES HERE
+  MPI_Reduce(local_proposal.data(), proposal.data(), num_elements * num_elements, MPI_INT,
+             MPI_SUM, 0, MPI_COMM_WORLD);
+
+  MPI_Bcast(proposal.data(), num_elements * num_elements, MPI_INT, 0, MPI_COMM_WORLD);
 
   return proposal;
 }
