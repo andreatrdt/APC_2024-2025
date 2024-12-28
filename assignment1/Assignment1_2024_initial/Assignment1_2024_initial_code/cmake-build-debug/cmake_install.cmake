@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/andre/OneDrive/Desktop/APC_2024-2025/assignment1/Assignment1_2024_initial/Assignment1_2024_initial_code
+# Install script for directory: C:/Users/andre/git_repos/APC_2024-2025/assignment1/Assignment1_2024_initial/Assignment1_2024_initial_code
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/andre/OneDrive/Desktop/APC_2024-2025/assignment1/Assignment1_2024_initial/Assignment1_2024_initial_code/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/andre/git_repos/APC_2024-2025/assignment1/Assignment1_2024_initial/Assignment1_2024_initial_code/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
