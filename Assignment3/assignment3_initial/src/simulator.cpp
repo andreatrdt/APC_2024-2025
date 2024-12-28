@@ -52,15 +52,18 @@ void Simulator::update_matches(const la::dense_matrix& proposal) {
   // You can split the work by assigning different rows to different process and combine
   // togheter the result.
 
+  //initialize size and rank
   int size;
   int rank;
   MPI_Comm_rank (MPI_COMM_WORLD, &rank);
   MPI_Comm_size (MPI_COMM_WORLD, &size);
 
+  // initialize local acceptors
   const int acceptors_per_proc = num_elements / size;
   const int start_acceptor = rank * acceptors_per_proc;
   const int end_acceptor = start_acceptor + acceptors_per_proc;
 
+  // local matrix
   la::dense_matrix local_matches(acceptors_per_proc, 1, num_elements);
 
   // loop over all the acceptors
@@ -81,7 +84,7 @@ void Simulator::update_matches(const la::dense_matrix& proposal) {
   }
 
 
-
+  // gather all the results from process 0 to other processes
   if (rank == 0) {
     MPI_Gather(local_matches.data(), acceptors_per_proc, MPI_INT,
                matches.data(), acceptors_per_proc, MPI_INT,
@@ -91,7 +94,7 @@ void Simulator::update_matches(const la::dense_matrix& proposal) {
                nullptr, 0, MPI_INT,
                0, MPI_COMM_WORLD);
   }
-
+  // send updated matches to all processes
   MPI_Bcast(matches.data(), num_elements, MPI_INT, 0, MPI_COMM_WORLD);
 }
 
@@ -108,13 +111,13 @@ la::dense_matrix Simulator::compute_proposal() {
   // declare the matrix that will hold the proposal
   la::dense_matrix proposal(num_elements, num_elements, 0);
 
-
+  // initialize rank adn size
   int size;
   int rank;
   MPI_Comm_rank (MPI_COMM_WORLD, &rank);
   MPI_Comm_size (MPI_COMM_WORLD, &size);
 
-  // Calcola il numero di propositori assegnati a ciascun processo
+  // initialize local proposers
   const int proposers_per_proc = num_elements / size;
   const int start_proposer = rank * proposers_per_proc;
   const int end_proposer = start_proposer + proposers_per_proc;
@@ -144,9 +147,11 @@ la::dense_matrix Simulator::compute_proposal() {
     }
   }
 
+  // Gather data taking into account possible overlaps
   MPI_Reduce(local_proposal.data(), proposal.data(), num_elements * num_elements, MPI_INT,
              MPI_SUM, 0, MPI_COMM_WORLD);
 
+  // send data to all processes
   MPI_Bcast(proposal.data(), num_elements * num_elements, MPI_INT, 0, MPI_COMM_WORLD);
 
   return proposal;
