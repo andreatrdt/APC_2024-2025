@@ -85,17 +85,9 @@ void Simulator::update_matches(const la::dense_matrix& proposal) {
 
 
   // gather all the results from process 0 to other processes
-  if (rank == 0) {
-    MPI_Gather(local_matches.data(), acceptors_per_proc, MPI_INT,
-               matches.data(), acceptors_per_proc, MPI_INT,
-               0, MPI_COMM_WORLD);
-  } else {
-    MPI_Gather(local_matches.data(), acceptors_per_proc, MPI_INT,
-               nullptr, 0, MPI_INT,
-               0, MPI_COMM_WORLD);
-  }
-  // send updated matches to all processes
-  MPI_Bcast(matches.data(), num_elements, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Allgather(local_matches.data(), acceptors_per_proc, MPI_INT,
+               matches.data(), acceptors_per_proc, MPI_INT, MPI_COMM_WORLD);
+
 }
 
 la::dense_matrix Simulator::compute_proposal() {
