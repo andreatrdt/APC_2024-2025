@@ -122,9 +122,9 @@ la::dense_matrix Simulator::compute_proposal() {
   const int start_proposer = rank * proposers_per_proc;
   const int end_proposer = start_proposer + proposers_per_proc;
 
-  la::dense_matrix local_proposal(num_elements, num_elements, 0);
+  la::dense_matrix local_proposal(num_elements,num_elements, 0);
 
-  // loop over the proposer to fille the proposal matrix
+  // loop over the proposer to fill the proposal matrix
   for (value_type proposer_index = start_proposer; proposer_index < end_proposer; ++proposer_index) {
     // get the current match for the current proposer
     const value_type current_match_index = get_matching_acceptor(proposer_index);
@@ -148,11 +148,12 @@ la::dense_matrix Simulator::compute_proposal() {
   }
 
   // Gather data taking into account possible overlaps
-  MPI_Reduce(local_proposal.data(), proposal.data(), num_elements * num_elements, MPI_INT,
-             MPI_SUM, 0, MPI_COMM_WORLD);
+  MPI_Allreduce(local_proposal.data(), proposal.data(), num_elements * num_elements , MPI_INT,
+             MPI_SUM, MPI_COMM_WORLD);
+  MPI_Allreduce(MPI_IN_PLACE, proposer_status.data(), num_elements , MPI_INT,
+             MPI_MAX, MPI_COMM_WORLD);
 
-  // send data to all processes
-  MPI_Bcast(proposal.data(), num_elements * num_elements, MPI_INT, 0, MPI_COMM_WORLD);
+
 
   return proposal;
 }
